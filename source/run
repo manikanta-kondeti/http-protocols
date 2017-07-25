@@ -1,0 +1,4 @@
+#!/bin/sh
+
+clang++ -std=c++11 server.cpp -o server 
+clang++ client.cpp -o client

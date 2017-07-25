@@ -1,0 +1,42 @@
+
+Things to do:
+1. parse the url
+2. Put, Get, Post, Delete 
+3. Queue implementation 
+
+Logic:
+ each job has a time attached to it
+ N items in a queue (N = 4) 
+
+'Multithreading': 
+    1. Listen thread 
+       while loop runs and listens a request 
+       if a request comes, parses it and puts it in a queue with status - paused, also maintains a map of job id's and statuses 
+
+    2. Execute thread 
+        Creates a pool of n threads 
+        Checks the queue and creates a thread for each job(Complex shit involved) 
+
+Questions:
+
+Assumptions:
+  Time is assumed to be 2 secs for each process 
+  Each execute in FIFO order
+
+  State diagram: (limit of N is 3)
+       r1, r2, r3, r4, r5, r6, r7 
+        (r1, r2) at 1s
+          (r3)   at 2s 
+        (r4, r5) at 4s 
+          (r6)   at 6s 
+          (r7)   at 7s
+
+[ "parallel execution" -  N jobs at a time]
+  - how do we solve this?
+    parallel threads - can a pool of threads work?
+
+File Design:
+  1. job.h - definition of job
+  2. server.cpp - main server logic
+  3. threads_execution - listen thread and execute thread 
+  4. queue.h - threads in a queue 

@@ -1,0 +1,89 @@
+Using a tcp network library implement the HTTP protocol with the following capabilities.
+
+Support HTTP methods GET, PUT, POST, DELETE
+
+Ability to parse the url path (http://<host>/<path>)
+
+Ability to read the body  of the http request as a string for methods POST and PUT. 
+
+Ability to respond with a status code (200 for success,   404 for not found ,  500 for internal server error, 403 for invalid request/ request which could not be fulfilled)
+
+Ability to respond with a payload(response body) as a string.
+
+NOTE:  Do not use any existing http server library.    
+
+Using the above implementation create an API for the following scenario:
+
+JOB =  An IO intensive task which runs on the server for a specified max amount of time t.  
+
+Server can run a maximum of N jobs at a time.  If N jobs are running further job request would be queued.
+
+A JOB can be in one of the following states .   QUEUED/RUNNING/PAUSED/SUCCESSFUL/FAILED/DELETED.  SUCCESSFUL / FAILED /DELETED are terminal states.  
+
+1.   PUT /job                          -
+
+    Start the job if currently N jobs are not running .
+
+    Queue the job otherwise.
+
+   Response :  
+
+       Status 200 if the job was either queue or started successfully.  The response body should contain Job ID (assigned random and uniquely)  and status (QUEUED/RUNNING/PAUSED/SUCCESSFUL/FAILED)
+
+2.   GET /job/<id>          - 
+
+   Response :  
+
+       Status 200 if the <id> is a known job id.  Respond should be same as that of the above PUT method. (contain Job ID (assigned random and uniquely)  and status (QUEUED/RUNNING/PAUSED/SUCCESSFUL/FAILED) 
+
+       Status 404 if <id> is unknown job id.
+
+3.   DELETE /job/<id>               -
+
+   Response :  
+
+       Status 200 if the <id> is a known job id and job is not in a terminal state except DELETED.  
+
+           a.) if the corresponding job is DELETED return job id and status DELETED.
+
+           b.) If the corresponding job is RUNNING, pause the job and update the state of the job as DELETED. Respond with  job id and status DELETED.
+
+           c.)  If the corresponding job is PAUSED, update the state of the job as DELETED. Respond with  job id and status DELETED
+
+           d.) If the corresponding job is QUEUED, remove  from the queue. Respond with  job id and status DELETED.
+
+       Status 403 :  If the corresponding job is in SUCCESSFUL/FAILED  state.
+
+       Status 404 if <id> is unknown job id.
+
+4.    POST /job/<id>/<pause>  -
+
+   Response :  
+
+       Status 200 if the <id> is a known job id and job is not in a terminal state.  
+
+           a.) if the corresponding job is RUNING,  pause the job and return job id and status PAUSED.
+
+           b.) If the corresponding job is PAUSED, Respond with  job id and status PAUSED.
+
+       Status 403 :  
+
+           If the corresponding job is in QUEUED/SUCCESSFUL/FAILED/DELETED state.
+
+       Status 404 if <id> is unknown job id.
+
+5.    POST /job/<id>/<resume>  -
+
+   Response :  
+
+       Status 200 if the <id> is a known job id and job is not in a terminal state.  
+
+           a.) if the corresponding job is RUNING,  Respond with job id and status RUNING.
+
+           b.) If the corresponding job is PAUSED, resume the job and Respond with  job id and status RUNING.
+
+       Status 403 :  
+
+           If the corresponding job is in QUEUED/SUCCESSFUL/FAILED/DELETED state.
+
+       Status 404 if <id> is unknown job id.
